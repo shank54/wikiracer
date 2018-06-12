@@ -23,17 +23,17 @@ class WikiRacer:
 				self.enddict[str(page)] = 1
 		self.paths = {startPage:[startPage]}
 		self.tempdict = {startPage:self.getWikiLinks(startPage)}
-		self.pqueue = [(1,startPage)]
+		self.bfsqueue = [(1,startPage)]
 
 
 	# BFS with some precomputation usin Priority Queue
 	def minimumDistance(self):
 		
-		while len(self.pqueue):
+		while len(self.bfsqueue):
 
 			#pop from PriorityQueue
-			priorityNumber,currentPageTitle = heappop(self.pqueue)
-			#print currentPageTitle
+			priorityNumber,currentPageTitle = self.bfsqueue.pop(0)
+			print currentPageTitle
 			
 			#find the links of popped page
 			currentPageLinks = self.tempdict[currentPageTitle]
@@ -43,6 +43,7 @@ class WikiRacer:
 			if currentPageLinks == None:
 				return None
 
+			pqueue = []
 			# check if endPage is in currentPageLinks
 			if self.endPage in currentPageLinks:
 				return self.paths[currentPageTitle]+[self.endPage]
@@ -53,9 +54,10 @@ class WikiRacer:
 						#get priority number of neighbour with endpage
 						priorityNumber = self.getPriority(neighbour)
 						#print priorityNumber
-						heappush(self.pqueue,(priorityNumber,neighbour))
+						heappush(pqueue,(priorityNumber,neighbour))
 						self.paths[neighbour] = self.paths[currentPageTitle]+[neighbour]
 						#print neighbour
+				self.bfsqueue.append(heappop(pqueue))
 
 
 	# create http link for title
